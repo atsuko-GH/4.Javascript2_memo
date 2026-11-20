@@ -5,7 +5,7 @@
 - 毎日の夢日記を記録できる
 
 ## ③アプリのデプロイURL
-デプロイしている場合はURLを記入（任意）
+https://atsuko-gh.github.io/4.Javascript2_memo/
 
 ## ④アプリのログイン用IDまたはPassword（ある場合）
 - ID: 〇〇〇〇〇〇〇〇
