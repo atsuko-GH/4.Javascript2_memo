@@ -1,0 +1,695 @@
+/* ============================================
+   夢日記 スタイル（メルヘン版）
+   ============================================ */
+
+/* まるい文字のフォント（ネットにつながっていないときは、ふつうのフォントになります） */
+@import url("https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap");
+
+/* ---------- 色の設定（ここを変えると全体の色が変わる） ---------- */
+:root {
+  --main: #a78bfa;          /* ラベンダー */
+  --main-dark: #7c5cd6;     /* 濃いラベンダー（文字用） */
+  --main-light: #f3eeff;    /* うすいラベンダー */
+  --pink: #f9a8d4;          /* ピンク */
+  --pink-light: #fff0f7;    /* うすいピンク */
+  --custom: #6fcf97;        /* 自分で追加した選択肢のミント */
+  --custom-dark: #2f9e63;
+  --custom-light: #ebfbf2;
+  --danger: #f87171;        /* 削除ボタン */
+  --star: #fcd34d;          /* 星の黄色 */
+  --border: #ece4ff;
+  --text: #4a3f6b;
+  --sub-text: #9b8fbf;
+  --radius: 20px;
+  --shadow: 0 6px 20px rgba(167, 139, 250, 0.18);
+}
+
+/* ---------- 全体 ---------- */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* JSでつけ外しして、要素を隠すためのクラス */
+.hidden {
+  display: none !important;
+}
+
+/* ---------- ヘッダー ---------- */
+.header {
+  text-align: center;
+  padding: 28px 16px 12px;
+}
+
+.header h1 {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 32px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--main-dark);
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.header h1::before,
+.header h1::after {
+  content: "✦";
+  color: var(--pink);
+  font-size: 18px;
+  margin: 0 10px;
+  vertical-align: middle;
+}
+
+/* ---------- メインの箱 ---------- */
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.88);
+  border: 2px solid #ffffff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  color: var(--main-dark);
+}
+
+.card h2::after {
+  content: " ☾";
+  color: var(--pink);
+}
+
+/* ---------- 入力フォームの1行 ---------- */
+.form-row {
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 2px dotted var(--border);
+}
+
+.form-row:last-of-type {
+  border-bottom: none;
+}
+
+.form-label {
+  width: 90px;
+  flex-shrink: 0;
+  font-weight: 700;
+  padding-top: 8px;
+  color: var(--main-dark);
+}
+
+.form-content {
+  flex: 1;
+  min-width: 0;   /* スマホで横にはみ出さないため */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- 入力欄 ---------- */
+.input {
+  padding: 9px 14px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background-color: #ffffff;
+  font-size: 16px;   /* 16px 以上にすると、iPhoneで入力時に勝手に拡大されない */
+  font-family: inherit;
+  color: var(--text);
+  max-width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--main);
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.2);
+}
+
+.input::placeholder {
+  color: #c4b8e6;
+}
+
+.input-wide {
+  width: 100%;
+}
+
+/* ---------- 気分ボタン ---------- */
+#mood-buttons {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.mood-btn {
+  padding: 8px 0 6px;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background-color: #ffffff;
+  color: var(--sub-text);
+  font-size: 11px;
+}
+
+.mood-btn .emoji {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+.mood-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* ---------- 星（鮮明さ） ---------- */
+.star {
+  border: none;
+  background: none;
+  font-size: 30px;
+  color: #e5def7;
+  padding: 0 2px;
+}
+
+.star.active {
+  color: var(--star);
+  text-shadow: 0 0 8px rgba(252, 211, 77, 0.7);
+}
+
+.star:hover {
+  transform: scale(1.15) rotate(-8deg);
+}
+
+/* ---------- 選択肢ボタン（場所・登場人物・出来事 / JSで作る） ---------- */
+.option-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.option-btn,
+.sleep-btn {
+  padding: 7px 16px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: var(--main-dark);
+  font-size: 14px;
+}
+
+.option-btn:hover,
+.sleep-btn:hover {
+  border-color: var(--main);
+}
+
+/* 自分で追加した選択肢はミント色 */
+.option-btn.custom {
+  border-color: #bfeed3;
+  background-color: var(--custom-light);
+  color: var(--custom-dark);
+}
+
+
+/* 自分で追加した選択肢の「×」（削除）ボタン */
+.option-btn .remove-tag {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: var(--custom-dark);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.option-btn .remove-tag:hover {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+/* ---------- 選ばれているボタン（JSで selected クラスをつける） ---------- */
+.mood-btn.selected,
+.option-btn.selected,
+.sleep-btn.selected {
+  background: linear-gradient(135deg, var(--main), var(--pink));
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(249, 168, 212, 0.5);
+}
+
+.option-btn.custom.selected {
+  background: linear-gradient(135deg, var(--custom), #8fd3f4);
+  color: #ffffff;
+}
+
+/* ---------- ＋追加 ---------- */
+.add-btn {
+  padding: 7px 16px;
+  border: 2px dashed #d6c9f5;
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--sub-text);
+  font-size: 14px;
+}
+
+.add-btn:hover {
+  background-color: var(--main-light);
+}
+
+.add-form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.add-input {
+  flex: 1;
+  min-width: 0;
+  max-width: 260px;
+}
+
+.add-submit {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 14px;
+  background-color: var(--custom);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* ---------- 記録するボタン ---------- */
+.save-area {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.save-btn {
+  padding: 14px 48px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--main), var(--pink));
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  box-shadow: 0 6px 18px rgba(167, 139, 250, 0.45);
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(249, 168, 212, 0.55);
+}
+
+/* ---------- カレンダー・ランキング ---------- */
+.summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.summary-box {
+  min-width: 0;   /* スマホで横にはみ出さないため */
+}
+
+.summary-box h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+  color: var(--main-dark);
+}
+
+.calendar-week,
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.calendar-week span {
+  text-align: center;
+  font-size: 12px;
+  color: var(--sub-text);
+  padding-bottom: 4px;
+}
+
+.calendar-week span:first-child {
+  color: #f472b6;   /* 日曜日はピンク */
+}
+
+.calendar-week span:last-child {
+  color: #60a5fa;   /* 土曜日は水色 */
+}
+
+/* カレンダーの1マス（JSで <div class="calendar-cell"> を作る） */
+.calendar-cell {
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  background-color: #faf7ff;
+  font-size: 10px;
+  color: var(--sub-text);
+  padding: 2px 4px;
+  overflow: hidden;
+}
+
+/* 夢の記録がある日 */
+.calendar-cell.has-dream {
+  background: linear-gradient(135deg, var(--main-light), var(--pink-light));
+  color: var(--main-dark);
+  font-weight: 700;
+}
+
+.calendar-cell .cell-emoji {
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+/* 月の始まりの前の空きマス */
+.calendar-cell.empty {
+  background-color: transparent;
+}
+
+.ranking {
+  margin: 0 0 16px;
+  padding: 12px 14px 12px 34px;
+  background-color: #faf7ff;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  font-size: 14px;
+  min-height: 44px;
+}
+
+.ranking li {
+  padding: 3px 0;
+}
+
+.ranking li::marker {
+  color: var(--pink);
+  font-weight: 700;
+}
+
+/* ---------- 絞り込み ---------- */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.filter-label {
+  font-weight: 700;
+  color: var(--main-dark);
+}
+
+.count {
+  margin-left: auto;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background-color: var(--main-light);
+  color: var(--main-dark);
+  font-size: 14px;
+}
+
+/* ---------- 夢の一覧（JSで <li class="dream-card"> を作る） ---------- */
+.dream-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dream-card {
+  position: relative;
+  border: 2px solid #ffffff;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, #ffffff 60%, var(--pink-light));
+  box-shadow: var(--shadow);
+}
+
+.dream-card::after {
+  content: "☁";
+  position: absolute;
+  top: 8px;
+  right: 14px;
+  font-size: 22px;
+  color: #ede7ff;
+  pointer-events: none;
+}
+
+.dream-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  font-size: 14px;
+  padding-right: 28px;
+}
+
+.dream-date {
+  font-weight: 700;
+  color: var(--main-dark);
+}
+
+.dream-mood {
+  font-size: 22px;
+}
+
+.dream-stars {
+  color: var(--star);
+  letter-spacing: 1px;
+}
+
+.dream-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.tag {
+  padding: 3px 12px;
+  border-radius: 999px;
+  background-color: var(--main-light);
+  color: var(--main-dark);
+  font-size: 12px;
+}
+
+.dream-memo {
+  color: #7a6f9b;
+  font-size: 14px;
+  margin: 0;
+  padding-right: 76px;
+  word-break: break-all;   /* 長い文字でもはみ出さない */
+}
+
+.delete-btn {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  padding: 5px 14px;
+  border: none;
+  border-radius: 999px;
+  background-color: #ffe4e6;
+  color: var(--danger);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.delete-btn:hover {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+
+/* ============================================
+   お知らせのポップアップ（alert / confirm のかわり）
+   ============================================ */
+
+/* 画面全体をうすく暗くする背景 */
+.modal {
+  position: fixed;
+  inset: 0;   /* 上下左右いっぱいに広げる */
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: rgba(74, 63, 107, 0.35);
+  backdrop-filter: blur(3px);
+}
+
+/* まん中の白い箱 */
+.modal-box {
+  width: 100%;
+  max-width: 340px;
+  padding: 24px 24px 20px;
+  text-align: center;
+  background: linear-gradient(160deg, #ffffff 55%, var(--pink-light));
+  border: 2px solid #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(124, 92, 214, 0.3);
+  animation: pop 0.25s ease-out;
+}
+
+/* ふわっと出てくる動き */
+@keyframes pop {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-title {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sub-text);
+}
+
+.modal-message {
+  margin: 0 0 22px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--main-dark);
+  line-height: 1.6;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.modal-btn {
+  min-width: 110px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.modal-ok {
+  background: linear-gradient(135deg, var(--main), var(--pink));
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.4);
+}
+
+.modal-cancel {
+  background-color: var(--main-light);
+  color: var(--main-dark);
+}
+
+/* ============================================
+   スマホ用（画面のはばが 600px 以下のとき）
+   ============================================ */
+@media (max-width: 600px) {
+  .header {
+    padding: 20px 12px 6px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    padding: 8px 20px;
+  }
+
+  .container {
+    padding: 12px 10px 40px;
+  }
+
+  .card {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  /* ラベルを上、ボタンを下に並べる */
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-label {
+    width: auto;
+    padding-top: 0;
+  }
+
+  /* 気分ボタンは 4つずつ2段に */
+  #mood-buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .star {
+    font-size: 34px;   /* 指で押しやすい大きさ */
+  }
+
+  /* 睡眠の質は3つ横に均等に */
+  #sleep-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .sleep-btn {
+    padding: 8px 2px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .save-btn {
+    width: 100%;
+  }
+
+  /* カレンダーとランキングを縦に並べる */
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-row select {
+    flex: 1;
+  }
+
+  /* 削除ボタンを、メモの下に置く */
+  .dream-memo {
+    padding-right: 0;
+  }
+
+  .delete-btn {
+    position: static;
+    display: block;
+    margin: 10px 0 0 auto;
+  }
+}
